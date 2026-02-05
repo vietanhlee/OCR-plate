@@ -1,0 +1,8 @@
+{
+  // Bắt extension C/C++ dùng compile_commands.json do CMake sinh ra.
+  // Nhờ vậy IntelliSense sẽ tự có includePath/link flags đúng (OpenCV, onnxruntime, ...)
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+
+  // (Tuỳ chọn) Nếu bạn dùng CMake Tools extension, setting này cũng hữu ích.
+  "cmake.exportCompileCommandsFile": true
+}
