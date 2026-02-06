@@ -1,34 +1,53 @@
 cmake_minimum_required(VERSION 3.10)
-project(onnx_infer)
+project(main)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(ONNXRUNTIME_DIR "${CMAKE_SOURCE_DIR}/onnxruntime")
+set(ONNXRUNTIME_DIR "${CMAKE_SOURCE_DIR}/third_party/onnxruntime")
+set(BIN_DIR ${CMAKE_SOURCE_DIR}/out/build/bin)
 
 find_package(OpenCV REQUIRED)
 
-add_executable(onnx_infer
-	main.cpp
+
+file(MAKE_DIRECTORY "${BIN_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}")
+
+add_executable(main
+	src/main.cpp
 	src/image_preprocess.cpp
 	src/ctc_decode.cpp
 	src/onnx_runner.cpp
 )
 
-target_include_directories(onnx_infer PRIVATE
+set_target_properties(main PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}"
+)
+
+target_include_directories(main PRIVATE
 	"${CMAKE_SOURCE_DIR}/include"
 	"${ONNXRUNTIME_DIR}/include"
 	"${OpenCV_INCLUDE_DIRS}"
 )
 
-target_link_libraries(onnx_infer PRIVATE
-	"${ONNXRUNTIME_DIR}/lib/libonnxruntime.so"
+find_library(ONNXRUNTIME_LIB
+	onnxruntime
+	PATHS "${ONNXRUNTIME_DIR}/lib"
+	NO_DEFAULT_PATH
+)
+
+if (NOT ONNXRUNTIME_LIB)
+	message(FATAL_ERROR "Khong tim thay libonnxruntime trong: ${ONNXRUNTIME_DIR}/lib")
+endif()
+
+target_link_libraries(main PRIVATE
+	"${ONNXRUNTIME_LIB}"
 	${OpenCV_LIBS}
 	pthread
 	dl
 )
 
-set_target_properties(onnx_infer PROPERTIES
+set_target_properties(main PROPERTIES
 	BUILD_RPATH "${ONNXRUNTIME_DIR}/lib"
 	INSTALL_RPATH "${ONNXRUNTIME_DIR}/lib"
 )
