@@ -1,3 +1,0 @@
-/home/levietanh/OCR plate/build/CMakeFiles/onnx_infer.dir
-/home/levietanh/OCR plate/build/CMakeFiles/edit_cache.dir
-/home/levietanh/OCR plate/build/CMakeFiles/rebuild_cache.dir

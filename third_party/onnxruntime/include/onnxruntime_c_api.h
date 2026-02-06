@@ -7125,7 +7125,7 @@ typedef enum OrtCompileApiFlags {
  *   OrtModelCompilationOptions* compile_options = NULL;
  *
  *   status = compile_api->CreateModelCompilationOptionsFromSessionOptions(env, session_options, &compile_options);
- *   status = compile_api->ModelCompilationOptions_SetInputModelPath(compile_options, ORT_TSTR("model.onnx"));
+ *   status = compile_api->ModelCompilationOptions_SetInputModelPath(compile_options, ORT_TSTR("model/model_ocr_plate.onnx"));
  *   status = compile_api->ModelCompilationOptions_SetOutputModelPath(compile_options, ORT_TSTR("model.compiled.onnx"));
  *   status = compile_api->CompileModel(env, compile_options);
  *   compile_api->ReleaseModelCompilationOptions(compile_options);
@@ -7198,7 +7198,7 @@ struct OrtCompileApi {
    *
    * If the output model's location is not set, ONNX Runtime will generate an output file with a path based on
    * the input model's file path. Examples:
-   *   /Path/my_model.onnx -> /Path/my_model_ctx.onnx
+   *   /Path/my_model/model_ocr_plate.onnx -> /Path/my_model_ctx.onnx
    *   /Path/my_model -> /Path/my_model_ctx.onnx
    *
    * \param[in] model_compile_options The OrtModelCompilationOptions instance.
@@ -7240,7 +7240,7 @@ struct OrtCompileApi {
    *
    * If the output model's location is not set, ONNX Runtime will generate an output file with a path based on
    * the input model's file path. Examples:
-   *   /Path/my_model.onnx -> /Path/my_model_ctx.onnx
+   *   /Path/my_model/model_ocr_plate.onnx -> /Path/my_model_ctx.onnx
    *   /Path/my_model -> /Path/my_model_ctx.onnx
    *
    * \param[in] model_compile_options The OrtModelCompilationOptions instance.
