@@ -26,18 +26,18 @@ Từ thư mục dự án:
 rm -rf build
 mkdir -p build
 cd build
-cmake ..
-cmake --build . -j
+cmake -S .. -B . 
+cmake --build . -j"$(nproc)"
 ```
 
-Sau khi build xong sẽ có file `build/main`.
+Sau khi build xong sẽ có file `out/build/bin/main`.
 
 ## 3) Chạy
 
 ### Cách 1: Truyền ảnh đầu vào
 
 ```bash
-../out/build/bin/main --image img/51F9846.jpg
+../out/build/bin/main --image ../img/51F9846.jpg
 ```
 
 ```bash
