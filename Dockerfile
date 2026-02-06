@@ -16,12 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /src
 
-# Copy only what we need to build. (Keeps rebuilds fast when changing code.)
-COPY CMakeLists.txt ./
-COPY include ./include
-COPY src ./src
-COPY model ./model
-COPY third_party ./third_party
+COPY . .
 
 RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
  && cmake --build build -j"$(nproc)"
