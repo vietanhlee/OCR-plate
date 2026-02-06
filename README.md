@@ -30,41 +30,41 @@ cmake ..
 cmake --build . -j
 ```
 
-Sau khi build xong sẽ có file `build/onnx_infer`.
+Sau khi build xong sẽ có file `build/main`.
 
 ## 3) Chạy
 
 ### Cách 1: Truyền ảnh đầu vào
 
 ```bash
-./build/onnx_infer --image 51F9846.jpg
+../out/build/bin/main --image img/51F9846.jpg
 ```
 
 ```bash
-./build/onnx_infer --image 51F13251.jpg
+../out/build/bin/main --image ../img/51F13251.jpg
 ```
 
 ```bash
-./build/onnx_infer --image 51F20754.jpg
+../out/build/bin/main --image ../img/51F20754.jpg
 ```
 
 ```bash
-./build/onnx_infer --image 51H58092.jpg
+../out/build/bin/main --image ../img/51H58092.jpg
 ```
 
 ```bash
-./build/onnx_infer --image 51V4579.jpg
+../out/build/bin/main --image ../img/51V4579.jpg
 ```
 ### Cách 2: Không truyền `--image`
 
 Chương trình sẽ dùng ảnh mặc định (được fix trong code):
 
-- 51V4579.jpg`
+- ../img/51V4579.jpg`
 
 Chạy:
 
 ```bash
-./build/onnx_infer
+../out/build/bin/main
 ```
 
 ### Tuỳ chọn decode
@@ -73,14 +73,14 @@ Mặc định decode CTC sẽ **gộp ký tự lặp liên tiếp** (collapse re
 Nếu bạn muốn tắt gộp ký tự lặp:
 
 ```bash
-./build/onnx_infer --image 51V4579.jpg --no_collapse
+../out/build/bin/main --image 51V4579.jpg --no_collapse
 ```
 
 ## 4) Cấu hình cố định trong code
 
 Các cấu hình đang được fix cứng trong file:
 
-- Model: `model.onnx`
+- Model: `model/model_ocr_plate.onnx`
 - Input: `(1, 64, 128, 3)` kiểu `uint8` layout `NHWC`
 
 
