@@ -4,35 +4,22 @@
 #include <string>
 #include <vector>
 
-namespace {
-
-template <typename T>
-std::vector<int64_t> ArgMaxLastDim(const T* data, int64_t time_dim, int64_t class_dim) {
-    std::vector<int64_t> indices;
-    indices.reserve(static_cast<size_t>(time_dim));
-
-    for (int64_t t = 0; t < time_dim; ++t) {
-        const T* row = data + t * class_dim;
-        int64_t best_i = 0;
-        T best_v = row[0];
-        for (int64_t c = 1; c < class_dim; ++c) {
-            const T v = row[c];
-            if (v > best_v) {
-                best_v = v;
-                best_i = c;
-            }
-        }
-        indices.push_back(best_i);
-    }
-
-    return indices;
-}
-
-} // namespace
+#include "utils/onnx_decode_utils.h"
 
 namespace onnx_runner {
 
 std::vector<int64_t> ChayModelVaLayArgMax(
+    Ort::Env& env,
+    const std::string& model_path,
+    const uint8_t* nhwc_u8,
+    int h,
+    int w,
+    int c) {
+	auto r = ChayModelVaLayArgMaxVaConf(env, model_path, nhwc_u8, h, w, c);
+	return std::move(r.indices);
+}
+
+ArgMaxWithConfResult ChayModelVaLayArgMaxVaConf(
     Ort::Env& env,
     const std::string& model_path,
     const uint8_t* nhwc_u8,
@@ -118,13 +105,13 @@ std::vector<int64_t> ChayModelVaLayArgMax(
     if (out_type == ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT) {
         const float* data = out0.GetTensorData<float>();
         const float* first = (out_shape.size() == 3) ? (data + 0 * time_dim * class_dim) : data;
-        return ArgMaxLastDim(first, time_dim, class_dim);
+        return onnx_decode_utils::ArgMaxWithConf(first, time_dim, class_dim);
     }
 
     if (out_type == ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE) {
         const double* data = out0.GetTensorData<double>();
         const double* first = (out_shape.size() == 3) ? (data + 0 * time_dim * class_dim) : data;
-        return ArgMaxLastDim(first, time_dim, class_dim);
+        return onnx_decode_utils::ArgMaxWithConf(first, time_dim, class_dim);
     }
 
     throw std::runtime_error("Kiểu output chưa hỗ trợ (cần float hoặc double)");

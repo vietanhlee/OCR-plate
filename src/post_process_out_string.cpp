@@ -9,24 +9,23 @@ std::string PostProcessOutString(const std::vector<int64_t>& indices,
         return std::string();
     }
 
-    int64_t end = static_cast<int64_t>(indices.size());
-
-    // Strip trailing blanks only (blank/pad is expected at the end and may repeat).
-    if (blank_index >= 0 && blank_index < static_cast<int64_t>(alphabet.size())) {
-        while (end > 0 && indices[static_cast<size_t>(end - 1)] == blank_index) {
-            --end;
-        }
-    }
-
     std::string out;
-    out.reserve(static_cast<size_t>(end));
+    out.reserve(indices.size());
 
-    for (int64_t i = 0; i < end; ++i) {
-        const int64_t idx = indices[static_cast<size_t>(i)];
+    for (size_t i = 0; i < indices.size(); ++i) {
+        const int64_t idx = indices[i];
         if (idx < 0 || idx >= static_cast<int64_t>(alphabet.size())) {
             continue;
         }
         out.push_back(alphabet[static_cast<size_t>(idx)]);
+    }
+
+    // Strip trailing blanks only (blank/pad is expected at the end and may repeat).
+    if (blank_index >= 0 && blank_index < static_cast<int64_t>(alphabet.size())) {
+        const char blank_char = alphabet[static_cast<size_t>(blank_index)];
+        while (!out.empty() && out.back() == blank_char) {
+            out.pop_back();
+        }
     }
 
     return out;
