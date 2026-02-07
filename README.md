@@ -37,7 +37,7 @@ Sau khi build xong sẽ có file `out/build/bin/main`.
 ### Cách 1: Truyền ảnh đầu vào
 
 ```bash
-../out/build/bin/main --image ../img/51F9846.jpg
+../out/build/bin/main --image ../img/51F98466.jpg
 ```
 
 ```bash
@@ -53,8 +53,14 @@ Sau khi build xong sẽ có file `out/build/bin/main`.
 ```
 
 ```bash
-../out/build/bin/main --image ../img/51V4579.jpg
+../out/build/bin/main --image ../img/51V44579.jpg
 ```
+
+```bash
+../out/build/bin/main --image ../img/51F15585.jpg
+```
+
+
 ### Cách 2: Không truyền `--image`
 
 Chương trình sẽ dùng ảnh mặc định (được fix trong code):

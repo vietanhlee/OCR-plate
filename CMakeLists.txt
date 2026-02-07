@@ -16,8 +16,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}")
 add_executable(main
 	src/main.cpp
 	src/image_preprocess.cpp
-	src/ctc_decode.cpp
+	src/post_process_out_string.cpp
 	src/onnx_runner.cpp
+	src/utils/cli_args.cpp
+	src/utils/ocr_report.cpp
+	src/utils/onnx_decode_utils.cpp
 )
 
 set_target_properties(main PROPERTIES
