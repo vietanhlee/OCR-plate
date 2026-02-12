@@ -2,7 +2,7 @@
 
 namespace post_process_out_string {
 
-std::string PostProcessOutString(const std::vector<int64_t>& indices,
+std::string PostprocessIndicesToString(const std::vector<int64_t>& indices,
                                 const std::string& alphabet,
                                 int64_t blank_index) {
     if (indices.empty() || alphabet.empty()) {
@@ -20,7 +20,7 @@ std::string PostProcessOutString(const std::vector<int64_t>& indices,
         out.push_back(alphabet[static_cast<size_t>(idx)]);
     }
 
-    // Strip trailing blanks only (blank/pad is expected at the end and may repeat).
+    // Chỉ strip các ký tự blank ở CUỐI chuỗi (blank/pad thường nằm cuối và có thể lặp).
     if (blank_index >= 0 && blank_index < static_cast<int64_t>(alphabet.size())) {
         const char blank_char = alphabet[static_cast<size_t>(blank_index)];
         while (!out.empty() && out.back() == blank_char) {
