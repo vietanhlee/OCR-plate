@@ -1,94 +1,103 @@
-# OCR plate - ONNX Runtime (C++) trên Linux
+# OCR Plate Pipeline (ONNX Runtime C++ + OpenCV)
 
-Repo này chạy infer biển số bằng ONNX Runtime C++ (CPU) và OpenCV để đọc/resize ảnh.
+Pipeline hiện tại chạy theo luồng:
 
-## 1) Yêu cầu
+1. Detect phương tiện (YOLO26 NMS-free)
+2. Crop phương tiện
+3. Phân loại hãng xe trên crop phương tiện (multi-thread)
+4. Detect biển số trên crop phương tiện (YOLO26 NMS-free, batch)
+5. Crop biển số
+6. OCR biển số (batch)
+7. Vẽ bbox + nhãn lên ảnh kết quả
 
-- Linux (Ubuntu/Debian khuyến nghị)
+## 1) Yêu cầu môi trường
+
+- Linux (khuyến nghị Ubuntu/Debian)
 - CMake >= 3.10
-- GCC/G++ hỗ trợ C++17
-- OpenCV (dev)
+- GCC/G++ hỗ trợ C++17+
+- OpenCV dev
 
-Cài OpenCV (Ubuntu/Debian):
+Cài OpenCV:
 
 ```bash
 sudo apt update
 sudo apt install -y build-essential cmake pkg-config libopencv-dev
 ```
 
-ONNX Runtime đã có sẵn trong thư mục `onnxruntime/` (đã gồm `include/` và `lib/`).
+ONNX Runtime đã được vendor sẵn trong `third_party/onnxruntime`.
 
 ## 2) Build
-
-Từ thư mục dự án:
 
 ```bash
 rm -rf build
 mkdir -p build
 cd build
-cmake -S .. -B . 
+cmake -S .. -B .
 cmake --build . -j"$(nproc)"
 ```
 
-Sau khi build xong sẽ có file `out/build/bin/main`.
+Binary sau build: `out/build/bin/main`
 
 ## 3) Chạy
 
-### Cách 1: Truyền ảnh đầu vào
+### Chạy 1 ảnh
 
 ```bash
-../out/build/bin/main --image ../img/51F98466.jpg
+cd build
+../out/build/bin/main --image ../img/test1.jpg
 ```
+
+### Chạy cả thư mục ảnh
 
 ```bash
-../out/build/bin/main --image ../img/51F13251.jpg
+cd build
+../out/build/bin/main --folder ../img
 ```
 
-```bash
-../out/build/bin/main --image ../img/51F20754.jpg
-```
+Ghi chú:
 
-```bash
-../out/build/bin/main --image ../img/51H58092.jpg
-```
+- Chỉ dùng **một** trong hai tham số `--image` hoặc `--folder`.
+- Nếu không truyền tham số nào, chương trình dùng ảnh mặc định trong `include/app_config.h`.
 
-```bash
-../out/build/bin/main --image ../img/51V44579.jpg
-```
+## 4) Model đang dùng
 
-```bash
-../out/build/bin/main --image ../img/51F15585.jpg
-```
+Khai báo tại `include/app_config.h`:
 
+- `model/vehicle_detection.onnx`
+- `model/plate_detection.onnx`
+- `model/brand_car_classification.onnx`
+- `model/model_ocr_plate.onnx`
 
-### Cách 2: Không truyền `--image`
+## 5) Ngưỡng và input chính
 
-Chương trình sẽ dùng ảnh mặc định (được fix trong code):
+Trong `include/app_config.h`:
 
-- ../img/51V4579.jpg`
+- `kVehicleConfThresh = 0.3`
+- `kPlateConfThresh = 0.5`
+- `kOcrConfAvgThresh = 0.6`
+- OCR input: `64x128` (RGB, uint8, NHWC)
+- Brand input: `224x224` (theo code preprocess brand classifier)
 
-Chạy:
+## 6) Ý nghĩa hiển thị trên ảnh
 
-```bash
-../out/build/bin/main
-```
+- BBox phương tiện:
+	- Xanh dương: phương tiện có ít nhất một biển số hợp lệ
+	- Đỏ: phương tiện không có biển số hợp lệ
+	- Nhãn: `vehicle_class`, `brand_id` (dạng `b<id>`), và `vehicle_conf`
+- BBox biển số:
+	- Hiển thị `text`, `plate_conf` (YOLO detect), `ocr_conf_avg`
+	- Màu bbox biển số:
+		- Xanh lá nếu `ocr_conf_avg >= 0.6`
+		- Đỏ nếu `ocr_conf_avg < 0.6`
 
-### Tuỳ chọn decode
+## 7) Output
 
-Mặc định decode CTC sẽ **gộp ký tự lặp liên tiếp** (collapse repeats).
-Nếu bạn muốn tắt gộp ký tự lặp:
+Ảnh kết quả được ghi vào thư mục:
 
-```bash
-../out/build/bin/main --image 51V4579.jpg --no_collapse
-```
+- `out/build/img_out`
 
-## 4) Cấu hình cố định trong code
+Tên file output theo mẫu:
 
-Các cấu hình đang được fix cứng trong file:
+- `<ten_anh>_annotated.jpg`
 
-- Model: `model/model_ocr_plate.onnx`
-- Input: `(1, 64, 128, 3)` kiểu `uint8` layout `NHWC`
-
-
-Bạn có thể đổi nhanh trong: `include/app_config.h`.
-
+Ngoài ảnh, chương trình cũng in log chi tiết (vehicle/brand/plate/OCR conf) ra stdout.
