@@ -4,13 +4,28 @@
 
 namespace app_config {
 
-// Model hiện có trong workspace: model/model_ocr_plate.onnx
-inline constexpr const char* kModelPath = "../model/model_ocr_plate.onnx";
+// Đường dẫn model
+inline constexpr const char* kOcrModelPath = "../model/model_ocr_plate.onnx";
+inline constexpr const char* kVehicleModelPath = "../model/vehicle_detection.onnx";
+inline constexpr const char* kPlateModelPath = "../model/plate_detection.onnx";
+inline constexpr const char* kBrandCarModelPath = "../model/brand_car_classification.onnx";
+
+// Alias để tương thích ngược (code OCR cũ)
+inline constexpr const char* kModelPath = kOcrModelPath;
 
 // Input shape : (1, 64, 128, 3) kiểu uint8, layout NHWC
 inline constexpr int kInputH = 64;
 inline constexpr int kInputW = 128;
 inline constexpr int kInputC = 3;
+
+// Input model phân loại hãng xe
+inline constexpr int kBrandInputH = 224;
+inline constexpr int kBrandInputW = 224;
+
+// Ngưỡng confidence (YOLO26 là NMS-free end-to-end, chỉ cần lọc theo score)
+inline constexpr float kVehicleConfThresh = 0.3f;
+inline constexpr float kPlateConfThresh = 0.5f;
+inline constexpr float kOcrConfAvgThresh = 0.60f;
 
 // Ký tự cuối '_' là blank cho CTC.
 inline const std::string kAlphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_";
