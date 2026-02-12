@@ -8,18 +8,18 @@
 
 namespace onnx_runner {
 
-std::vector<int64_t> ChayModelVaLayArgMax(
+std::vector<int64_t> RunModelGetArgMax(
     Ort::Env& env,
     const std::string& model_path,
     const uint8_t* nhwc_u8,
     int h,
     int w,
     int c) {
-	auto r = ChayModelVaLayArgMaxVaConf(env, model_path, nhwc_u8, h, w, c);
+	auto r = RunModelGetArgMaxAndConf(env, model_path, nhwc_u8, h, w, c);
 	return std::move(r.indices);
 }
 
-ArgMaxWithConfResult ChayModelVaLayArgMaxVaConf(
+ArgMaxWithConfResult RunModelGetArgMaxAndConf(
     Ort::Env& env,
     const std::string& model_path,
     const uint8_t* nhwc_u8,
