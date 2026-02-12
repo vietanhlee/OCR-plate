@@ -12,7 +12,7 @@ struct ConfidenceSummary {
 	double avg = 0.0;
 };
 
-// Prints:
+// In ra:
 // - Bien so: <decoded>
 // - Conf(avg_T=..., softmax_top1): ...
 // - Timestep conf (9 ky tu): <ch:conf ...>
