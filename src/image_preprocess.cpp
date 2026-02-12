@@ -8,13 +8,14 @@
 
 namespace image_preprocess {
 
-cv::Mat DocVaTienXuLyAnh_RGB_U8_HWC(const std::filesystem::path& image_path, int target_w, int target_h) {
-    cv::Mat bgr = cv::imread(image_path.string(), cv::IMREAD_COLOR);
+cv::Mat PreprocessMatRgbU8Hwc(const cv::Mat& bgr, int target_w, int target_h) {
     if (bgr.empty()) {
-        throw std::runtime_error("Không đọc được ảnh: " + image_path.string());
+        throw std::runtime_error("Khong doc duoc anh (mat rong)");
+    }
+    if (bgr.channels() != 3) {
+        throw std::runtime_error("Anh dau vao can 3 kenh");
     }
 
-    // OpenCV imread trả về BGR, mình đổi sang RGB cho giống infer.py
     cv::Mat rgb;
     cv::cvtColor(bgr, rgb, cv::COLOR_BGR2RGB);
 
@@ -24,13 +25,18 @@ cv::Mat DocVaTienXuLyAnh_RGB_U8_HWC(const std::filesystem::path& image_path, int
     if (resized.type() != CV_8UC3) {
         resized.convertTo(resized, CV_8UC3);
     }
-
-    // Đảm bảo dữ liệu liên tục để đưa thẳng vào tensor
     if (!resized.isContinuous()) {
         resized = resized.clone();
     }
+    return resized;
+}
 
-    return resized; // HWC, RGB, uint8
+cv::Mat ReadAndPreprocessImageRgbU8Hwc(const std::filesystem::path& image_path, int target_w, int target_h) {
+    cv::Mat bgr = cv::imread(image_path.string(), cv::IMREAD_COLOR);
+    if (bgr.empty()) {
+        throw std::runtime_error("Không đọc được ảnh: " + image_path.string());
+    }
+	return PreprocessMatRgbU8Hwc(bgr, target_w, target_h);
 }
 
 } // namespace image_preprocess
