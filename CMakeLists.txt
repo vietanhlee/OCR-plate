@@ -18,6 +18,9 @@ add_executable(main
 	src/image_preprocess.cpp
 	src/post_process_out_string.cpp
 	src/onnx_runner.cpp
+	src/yolo26_nmsfree.cpp
+	src/ocr_batch.cpp
+	src/brand_classifier.cpp
 	src/utils/cli_args.cpp
 	src/utils/ocr_report.cpp
 	src/utils/onnx_decode_utils.cpp
